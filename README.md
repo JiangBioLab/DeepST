@@ -1,5 +1,3 @@
-<img src="./Figure/label.png" alt="drawing" width="25%"/>
-
 # DeepST: Identification of spatial domains in spatial transcriptomics by deep learning
 
 ## Overview
