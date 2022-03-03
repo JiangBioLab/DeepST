@@ -18,42 +18,20 @@ import scanpy as sc
 import scanpy.external as sce
 import anndata
 from pathlib import Path
-from sklearn.metrics import pairwise_distances
 from scipy.sparse import issparse, isspmatrix_csr, csr_matrix, spmatrix
 import matplotlib.pyplot as plt
 from scipy import sparse
 from scipy.spatial import distance
-from sklearn.decomposition import IncrementalPCA, NMF, TruncatedSVD, FactorAnalysis, LatentDirichletAllocation, sparse_encode
-
-from sklearn.linear_model import LinearRegression
-from sklearn.decomposition import PCA
 from tqdm import tqdm
 
-from utils_func import read_10X_Visium, read_merfish, read_SlideSeq, ReadOldST, read_seqfish, read_stereoSeq
+from utils_func import *
 from integrated_feat import image_feature, image_crop
 from adj import graph, combine_graph_dict
-from model import STMAP_model
+from model import DeepST_model
 from main import train
 
 """
 Test:
-from STMAP import run
-data_path = '/home/xuchang/Project/STMAP/DLPFC/'
-data_name = '151673'
-save_path = '/home/xuchang/Project/STMAP_Final/Results'
-
-H_mo = run(data_path=data_path, data_name=data_name, save_path=save_path)
-adata, stmap_feat = H_mo.fit()
-
-import pandas as pd
-from sklearn import metrics
-df_meta = pd.read_csv('/home/xuchang/Project/STMAP/DLPFC/151673/metadata.tsv', sep='\t')
-df_meta['STMAP'] = adata.obs['STMAP'].tolist()
-# #################### evaluation
-# ---------- Load manually annotation ---------------
-df_meta = df_meta[~pd.isnull(df_meta['layer_guess'])]
-ARI = metrics.adjusted_rand_score(df_meta['layer_guess'], df_meta['STMAP'])
-print(ARI)
 
 """
 
@@ -198,10 +176,10 @@ class run:
 		return adata, graph_dict
 
 	def cal_spatial_weight(self, 
-						 data,
-					   	 spatial_k = 50,
-					   	 spatial_type = "NearestNeighbors",
-						):
+				data,
+				spatial_k = 50,
+				spatial_type = "NearestNeighbors",
+				):
 		from sklearn.neighbors import NearestNeighbors, KDTree, BallTree
 		if spatial_type == "NearestNeighbors":
 			nbrs = NearestNeighbors(n_neighbors=spatial_k+1, algorithm='ball_tree').fit(data)
@@ -221,9 +199,8 @@ class run:
 		return spatial_weight
 
 	def ingrated_adata(self,
-						highly_variable = False,
-						n_top_genes = 3000,):
-
+			highly_variable = False,
+			n_top_genes = 3000,):
 		adata_all, graph_dict = self.load_adata()
 		if isinstance(adata_all.X, csr_matrix):
 			adata_all.X = adata_all.X.toarray()
@@ -242,17 +219,17 @@ class run:
 		
 		if isinstance(self.data_name, str):		
 				adata = self.cal_weight_matrix(adata_all, 
-												pd_dist_type = self.pd_dist_type,
-											    md_dist_type = self.md_dist_type,
-											    gb_dist_type = self.gb_dist_type,)
+							       pd_dist_type = self.pd_dist_type,
+							       md_dist_type = self.md_dist_type,
+							       gb_dist_type = self.gb_dist_type,)
 				adata = self.find_adjacent_spot(adata, neighbour_k = self.neighbour_k)
 		elif isinstance(self.data_name, list):	
 			for idx in range(len(self.data_name)):
 				current_adata = adata_all[adata_all.obs['batch_name'] == self.data_name[idx], :]
 				current_adata = self.cal_weight_matrix(current_adata, 
-													   pd_dist_type = self.pd_dist_type,
-											    	   md_dist_type = self.md_dist_type,
-											    	   gb_dist_type = self.gb_dist_type,)
+								       pd_dist_type = self.pd_dist_type,
+								       md_dist_type = self.md_dist_type,
+								       gb_dist_type = self.gb_dist_type,)
 				current_adata = self.find_adjacent_spot(current_adata, neighbour_k = self.neighbour_k)
 
 				if idx == 0:
@@ -265,8 +242,8 @@ class run:
 		return adata, graph_dict
 
 	def search_cluster(self,
-					  adata,
-		              eval_cluster_n=7,):
+			   adata,
+			   eval_cluster_n=7,):
 		for res in sorted(list(np.arange(0.1, 2.5, 0.01)), reverse=True):
 			sc.tl.leiden(adata, random_state=0, resolution=res)
 			count_unique_leiden = len(pd.DataFrame(adata.obs['leiden']).leiden.unique())
@@ -275,11 +252,11 @@ class run:
 		return res
 
 	def cal_weight_matrix(self, 
-		   				 adata,
-						 pd_dist_type="euclidean",
-                         md_dist_type="cosine",
-                         gb_dist_type="correlation",
-                         eclidean_k = 60):
+			      adata,
+			      pd_dist_type="euclidean",
+			      md_dist_type="cosine",
+			      gb_dist_type="correlation",
+			      eclidean_k = 60):
 
 		if self.platform == "Visium":
 			img_row = adata.obs["imagerow"]
@@ -310,7 +287,7 @@ class run:
 		########## cal spatial weight
 		from sklearn.neighbors import kneighbors_graph
 		pd_norm_kneighbors_graph = kneighbors_graph(adata.obsm['spatial'], self.eclidean_k, 
-													mode='connectivity', include_self=False)
+							    mode='connectivity', include_self=False)
 		pd_norm_kneighbors_graph = pd_norm_kneighbors_graph.toarray()
 
 		pd_list = []
@@ -327,19 +304,18 @@ class run:
 
 		######### cal "NearestNeighbors"
 		pd_norm_NearestNeighbors = self.cal_spatial_weight(adata.obsm['spatial'], 
-														spatial_k = self.eclidean_k, spatial_type = "NearestNeighbors")
+								   spatial_k = self.eclidean_k, spatial_type = "NearestNeighbors")
 
 		pd_norm_KDTree = self.cal_spatial_weight(adata.obsm['spatial'], 
-														spatial_k = self.eclidean_k, spatial_type = "KDTree")
+							 spatial_k = self.eclidean_k, spatial_type = "KDTree")
 
 		pd_norm_BallTree = self.cal_spatial_weight(adata.obsm['spatial'], 
-														spatial_k = self.eclidean_k, spatial_type = "BallTree")
+							   spatial_k = self.eclidean_k, spatial_type = "BallTree")
 		pd_norm =  pd_norm_Re * pd_norm_kneighbors_graph * pd_norm_eu
 
 		Average_pd = pd_norm.sum()/adata.shape[0]
 
-		print(Average_pd)
-
+		# print(Average_pd)
 
 		gd = 1 - pairwise_distances(np.array(adata.obsm["X_pca"]), metric=gb_dist_type)
 		# gd[gd < 0] = 0
@@ -351,23 +327,23 @@ class run:
 			md[md < 0] = 0
 			adata.obsm["morphological_distance"] = md	
 			adata.obsm["weights_matrix_all"] = (adata.obsm["physical_distance"]
-												*adata.obsm["gene_correlation"]
-												*adata.obsm["morphological_distance"])
+							    *adata.obsm["gene_correlation"]
+							    *adata.obsm["morphological_distance"])
 			adata.obsm["weights_matrix_nomd"] = (adata.obsm["gene_correlation"]
-												* adata.obsm["physical_distance"])							
+							     * adata.obsm["physical_distance"])							
 		else:
 			adata.obsm["weights_matrix_all"] = (adata.obsm["gene_correlation"]
-												* adata.obsm["physical_distance"])
+							    * adata.obsm["physical_distance"])
 		if self.verbose:
 			print("The weight result of image feature is added to adata.obsm['weights_matrix_all'] !")
 
 		return adata
 
 	def find_adjacent_spot(self, 
-							adata, 
-							use_data='raw', 
-							neighbour_k=3,
-							weights='weights_matrix_all'):
+			       adata, 
+			       use_data='raw', 
+			       neighbour_k=3,
+			       weights='weights_matrix_all'):
 
 		if use_data == "raw":
 			if isinstance(adata.X, csr_matrix):
@@ -434,10 +410,10 @@ class run:
 		stmap_model = STMAP_model(input_dim = concat_X.shape[1], 
                         		Conv_type = self.Conv_type,
                         		linear_encoder_hidden= self.linear_encoder_hidden,
-								linear_decoder_hidden= self.linear_decoder_hidden,
-								conv_hidden= self.conv_hidden,
-								p_drop=self.p_drop,
-								dec_cluster_n=self.dec_cluster_n,)
+					linear_decoder_hidden= self.linear_decoder_hidden,
+					conv_hidden= self.conv_hidden,
+					p_drop=self.p_drop,
+					dec_cluster_n=self.dec_cluster_n,)
 		stmap = train(concat_X, graph_dict, stmap_model, pre_epochs=self.pre_epochs, epochs=self.epochs)
 		stmap.fit()
 		stmap_feat, _ = stmap.process()
@@ -495,14 +471,14 @@ class run:
 		return adata, stmap_feat
 
 	def plot_clustering(self, 
-						adata, 
-						img_key=None, 
-						color='DeepST',
-						show=False,
-						legend_loc='right margin',
-						legend_fontsize='x-large',
-						size=1.6,
-						dpi=300):
+			    adata, 
+			    img_key=None, 
+			    color='DeepST',
+			    show=False,
+			    legend_loc='right margin',
+			    legend_fontsize='x-large',
+			    size=1.6,
+			    dpi=300):
 		if isinstance(self.data_name, str):
 			sc.pl.spatial(adata, img_key=img_key, color=color, show=show, 
     					 legend_loc=legend_loc, legend_fontsize=legend_fontsize, size=size)
@@ -513,15 +489,15 @@ class run:
 			pass
 
 	def plot_umap(self, 
-				  adata,
-				  color='batch_name', 
-				  legend_loc=None,
-				  legend_fontsize=12,
-				  legend_fontoutline=2,
-				  frameon=False,
-				  add_outline=True,
-				  dpi=300,
-				  ):
+		      adata,
+		      color='batch_name', 
+		      legend_loc=None,
+		      legend_fontsize=12,
+		      legend_fontoutline=2,
+		      frameon=False,
+		      add_outline=True,
+		      dpi=300,
+		     ):
 		umap_adata = anndata.AnnData(adata.obsm["DeepST_feat"])
 		umap_adata.obs_names = adata.obs_names
 		umap_adata.obs = adata.obs
