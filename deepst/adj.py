@@ -10,7 +10,6 @@
 test:
     from cal_graph import graph, combine_graph_dict
     import scanpy as sc
-    data_path = "/home/xuchang/Project/STMAP/Human_breast/output/Breast_data/STMAP_Breast_15.h5ad"
     adata = sc.read(data_path)
     graph_cons = graph(adata.obsm['spatial'], distType='euclidean', k=10)
     graph_dict = graph_cons.main()
