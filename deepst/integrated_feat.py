@@ -10,8 +10,6 @@
 test:
 import scanpy as sc
 from integrated_feat import image_feature, image_crop
-data_path = "/home/xuchang/Project/STMAP/Human_breast/output/Breast_data/STMAP_Breast_15.h5ad"
-save_path = '/home/xuchang/Project/STMAP_Final/tiles'
 adata = sc.read(data_path)
 image_crop(adata, save_path)
 adata = image_feature(adata).extract_image_feat()
