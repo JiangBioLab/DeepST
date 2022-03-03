@@ -27,7 +27,7 @@ from tqdm import tqdm
 from utils_func import *
 from integrated_feat import image_feature, image_crop
 from adj import graph, combine_graph_dict
-from model import DeepST_model
+from model import STMAP_model
 from main import train
 
 """
