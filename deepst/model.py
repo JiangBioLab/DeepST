@@ -2,7 +2,7 @@
 """
 # Author: *******
 # Created Time : Mon 23 Apr 2021 08:26:32 PM CST
-# File Name: STMAP_train.py
+# File Name: DeepST_train.py
 # Description:`
 """
 
@@ -14,7 +14,6 @@ from GCN import STMAP_model
 import scanpy as sc
 import torch 
 
-data_path = "/home/xuchang/Project/STMAP/Human_breast/output/Breast_data/STMAP_Breast_15.h5ad"
 adata = sc.read(data_path)
 graph_dict = graph(adata.obsm['spatial'], distType='euclidean', k=10).main()
 sc.pp.filter_genes(adata, min_cells=5)
