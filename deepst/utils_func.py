@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 '''
 # Author: ********
-# Create Time :
+# Create Time : 2021.4
 # File Name :utils_func.py
 
 '''
@@ -18,26 +18,16 @@ from torch.utils.data import DataLoader
 from torch.utils.data import TensorDataset
 
 from scipy.sparse import issparse,csr_matrix
-from sklearn.preprocessing import maxabs_scale, MaxAbsScaler
 from torch.utils.data import TensorDataset
 
 import matplotlib.pyplot as plt
-
 from pathlib import Path, PurePath
 from typing import Optional, Union
-from anndata import AnnData
-import numpy as np
 from PIL import Image
-import pandas as pd
-import stlearn
 from _compat import Literal
-import scanpy
-import scipy
-import matplotlib.pyplot as plt
 
 _QUALITY = Literal["fulres", "hires", "lowres"]
 _background = ["black", "white"]
-
 
 def read_10X_Visium(path, 
                     genome=None,
@@ -67,7 +57,6 @@ def read_10X_Visium(path,
     adata.obs["imagerow"] = image_coor[:, 1]
     adata.uns["spatial"][library_id]["use_quality"] = quality
     return adata
-
 
 def read_SlideSeq(path, 
                  library_id = None,
@@ -120,7 +109,6 @@ def read_SlideSeq(path,
     adata.obsm["spatial"] = meta[["x", "y"]].values
 
     return adata
-
 
 def read_merfish(path, 
                 library_id=None,
@@ -282,131 +270,3 @@ def read_stereoSeq(path,
     adata.uns["spatial"][library_id]["scalefactors"]["spot_diameter_fullres"] = spot_diameter_fullres
 
     return adata
-
-
-
-def create_stlearn(
-    count: pd.DataFrame,
-    spatial: pd.DataFrame,
-    library_id: str,
-    image_path: Optional[Path] = None,
-    scale: float = None,
-    quality: str = "hires",
-    spot_diameter_fullres: float = 50,
-    background_color: _background = "white",
-):
-    """\
-    Create AnnData object for stLearn
-    Parameters
-    ----------
-    count
-        Pandas Dataframe of count matrix with rows as barcodes and columns as gene names
-    spatial
-        Pandas Dataframe of spatial location of cells/spots.
-    library_id
-        Identifier for the visium library. Can be modified when concatenating multiple adata objects.
-    scale
-        Set scale factor.
-    quality
-        Set quality that convert to stlearn to use. Store in anndata.obs['imagecol' & 'imagerow']
-    spot_diameter_fullres
-        Diameter of spot in full resolution
-    background_color
-        Color of the backgound. Only `black` or `white` is allowed.
-    Returns
-    -------
-    AnnData
-    """
-    adata = AnnData(X=count)
-
-    adata.obsm["spatial"] = spatial.values
-
-    if scale == None:
-        max_coor = np.max(adata.obsm["spatial"])
-        scale = 2000 / max_coor
-
-    adata.obs["imagecol"] = spatial["imagecol"].values * scale
-    adata.obs["imagerow"] = spatial["imagerow"].values * scale
-
-    if image_path != None:
-        stlearn.add.image(
-            adata,
-            library_id=library_id,
-            quality=quality,
-            imgpath=image_path,
-            scale=scale,
-        )
-    else:
-        # Create image
-        max_size = np.max([adata.obs["imagecol"].max(), adata.obs["imagerow"].max()])
-        max_size = int(max_size + 0.1 * max_size)
-
-        if background_color == "black":
-            image = Image.new("RGBA", (max_size, max_size), (0, 0, 0, 0))
-        else:
-            image = Image.new("RGBA", (max_size, max_size), (255, 255, 255, 255))
-        imgarr = np.array(image)
-
-        # Create spatial dictionary
-        adata.uns["spatial"] = {}
-        adata.uns["spatial"][library_id] = {}
-        adata.uns["spatial"][library_id]["images"] = {}
-        adata.uns["spatial"][library_id]["images"][quality] = imgarr
-        adata.uns["spatial"][library_id]["use_quality"] = quality
-        adata.uns["spatial"][library_id]["scalefactors"] = {}
-        adata.uns["spatial"][library_id]["scalefactors"][
-            "tissue_" + quality + "_scalef"
-        ] = scale
-        adata.uns["spatial"][library_id]["scalefactors"][
-            "spot_diameter_fullres"
-        ] = spot_diameter_fullres
-
-    return adata
-
-
-def ReadOldST(
-    count_matrix_file: Union[str, Path] = None,
-    spatial_file: Union[str, Path] = None,
-    image_file: Union[str, Path] = None,
-    library_id: str = "OldST",
-    scale: float = 1.0,
-    quality: str = "hires",
-    spot_diameter_fullres: float = 50,
-) -> AnnData:
-
-    """\
-    Read Old Spatial Transcriptomics data
-    Parameters
-    ----------
-    count_matrix_file
-        Path to count matrix file.
-    spatial_file
-        Path to spatial location file.
-    image_file
-        Path to the tissue image file
-    library_id
-        Identifier for the visium library. Can be modified when concatenating multiple adata objects.
-    scale
-        Set scale factor.
-    quality
-        Set quality that convert to stlearn to use. Store in anndata.obs['imagecol' & 'imagerow']
-    spot_diameter_fullres
-        Diameter of spot in full resolution
-    Returns
-    -------
-    AnnData
-    """
-
-    adata = scanpy.read_text(count_matrix_file)
-    adata = stlearn.add.parsing(adata, coordinates_file=spatial_file)
-    stlearn.add.image(
-        adata,
-        library_id=library_id,
-        quality=quality,
-        imgpath=image_file,
-        scale=scale,
-        spot_diameter_fullres=spot_diameter_fullres,
-    )
-
-    return adata
-
