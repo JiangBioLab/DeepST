@@ -1,7 +1,7 @@
 # DeepST: Identification of spatial domains in spatial transcriptomics by deep learning
 
 ## Overview
-DeepST first uses H&E staining to extract tissue morphology information through a pre-trained deep learning model, and normalizes each spot’s gene expression according to the similarity of adjacent spots. DeepST further learns a spatial adjacency matrix on spatial location for the construction of graph convolutional network. DeepST utilizes a denoising autoencoder network and a variational graph autoencoder to generate the final latent embeddings. The output of DeepST can be applied to identify spatial domains, batch effect correction and downstream analysis.
+DeepST first uses H&E staining to extract tissue morphology information through a pre-trained deep learning model, and normalizes each spot’s gene expression according to the similarity of adjacent spots. DeepST further learns a spatial adjacency matrix on spatial location for the construction of graph convolutional network. DeepST uses a graph neural network autoencoder and a denoising autoencoder to jointly generate a latent representation of augmented ST data, while domain adversarial neural networks (DAN) are used to integrate ST data from multi-batches or different technologies. The output of DeepST can be applied to identify spatial domains, batch effect correction and downstream analysis.
 
 ![Workflow](./Figure/Workflow.png)
 
