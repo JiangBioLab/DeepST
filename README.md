@@ -11,17 +11,13 @@ We created the python package called `DeepST` that uses [`scanpy`](https://scanp
 evaluate the results. DeepST is implemented in the open-source python using [`PyTorch`](https://pytorch.org/) and [`PyG`](https://github.com/pyg-team/pytorch_geometric) libraries.
 
 ### Installation
-The DeepST python package is in the folder DeepST. You can install it from the root of this repository using
+Using python virtual environment with [`conda`](https://anaconda.org/)
 
 ```bash
-pip install .
+conda create -n deepst_env python=3.8
+conda activate deepst_env
+pip install -r requiements.txt
 ```
-Alternatively, you can also install the package directly from GitHub via
-
-```bash
-pip install git+https://github.com/JiangBioLab/DeepST.git
-```
-
 ### Installing additional packages
 
 <details>
