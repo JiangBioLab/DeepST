@@ -11,7 +11,11 @@ We created the python package called `DeepST` that uses [`scanpy`](https://scanp
 evaluate the results. DeepST is implemented in the open-source python using [`PyTorch`](https://pytorch.org/) and [`PyG`](https://github.com/pyg-team/pytorch_geometric) libraries.
 
 ### Installation
-Using python virtual environment with [`conda`](https://anaconda.org/)
+####Start by grabbing this source codes:
+git clone https://github.com/spatial-Transcriptomics/DeepST.git
+cd DeepST
+
+####(Recommended) Using python virtual environment with [`conda`](https://anaconda.org/)
 
 ```bash
 conda create -n deepst_env python=3.8
