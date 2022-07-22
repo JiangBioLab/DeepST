@@ -116,10 +116,10 @@ adata = deepen._get_augment(adata, adjacent_weight = 0.3, neighbour_k = 4,)
 graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
 adata = deepen._fit(adata, graph_dict, pretrain = False)
 adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True) ###### without using prior knowledge, setting priori = False.
-sc.pl.spatial(adata, img_key=None, color="DeepST_refine_domain", size=1.6)
-save_path_figure = Path(os.path.join(save_path, "Figure", data_name))
-save_path_figure.mkdir(parents=True, exist_ok=True)
-plt.savefig(os.path.join(save_path_figure,f'{data_name}_domain.pdf'), bbox_inches='tight', dpi=300)
+######## spatial domains
+deepen.plot_domains(adata)
+######## UMAP
+deepen.plot_umap(adata)
 ...
 ```
 ![Results](./Figure/Results.png)
