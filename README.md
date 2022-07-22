@@ -107,8 +107,8 @@ save_path = "./Results" #### save path
 deepen = run(save_path = save_path, 
 	platform = "Visium",
 	pca_n_comps = 200,
-	pre_epochs=1000,
-	Conv_type='GCNConv', #### you can choose GNN types. 
+	pre_epochs = 800,
+	Conv_type="GCNConv", #### you can choose GNN types. 
 	)
 adata = deepen._get_adata(data_path, data_name)
 adata = deepen._get_augment(adata, adjacent_weight = 0.3, neighbour_k = 4,)
