@@ -123,7 +123,7 @@ deepen.plot_umap(adata)
 ...
 ```
 ![Results](./Figure/151673.png)
-+ #### DeepST on ST data from other platforms.
++ #### DeepST integrates data from mutil-batches or different technologies.
 ```python
 from DeepST import run
 data_path = './data/'
