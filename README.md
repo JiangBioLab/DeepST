@@ -93,10 +93,6 @@ DeepST is used on spatial transcriptomics (ST) datasets. In essence, you can ref
 + #### DeepST on DLPFC from 10x Visium.
 ```python
 import os 
-import sys
-import scanpy as sc
-import numpy as np 
-import pandas as pd 
 from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -125,10 +121,6 @@ deepen.plot_umap(adata)
 + #### DeepST integrates data from mutil-batches or different technologies.
 ```python
 import os 
-import sys
-import scanpy as sc
-import numpy as np 
-import pandas as pd 
 from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -147,20 +139,31 @@ adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True)
 deepen.plot_umap(adata, color=["DeepST_domain", "batch_name"])
 ...
 ```
-+ #### DeepST use different graph neural network (GNN) layer.
++ #### DeepST works on other spatial omics data.
 ```python
+import os 
 from DeepST import run
-data_path = './data/'
-data_name = 'MouseOlfactoryBulb' 
-save_path = './Results/'
+import matplotlib.pyplot as plt
+from pathlib import Path
 
-H_mo = run(data_path=data_path, 
-           data_name=data_name, 
-           save_path=save_path, 
-           platform='Steroseq',  
-           Conv_type='GATConv',) ####### Based on PyG, you can select different GNN layer, such as GATConv, SAGEConv, et. 
-adata, stmap_feat = H_mo.fit()
-H_mo.plot_clustering(adata, color='DeepST',img_key=None)
+data_path = "./Datasets" 
+data_name = 'Stereoseq' 
+save_path = "./Results"
+n_domains = 8 
+deepen = run(save_path = save_path, 
+	platform = "stereoseq", ##### varous platforms
+	pca_n_comps = 200,
+	pre_epochs = 800,
+	)
+adata = deepen._get_adata(data_path, data_name)
+adata = deepen._get_augment(adata, adjacent_weight = 0.3, neighbour_k = 4, weights="weights_matrix_nomd")
+graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
+adata = deepen._fit(adata, graph_dict, pretrain = False)
+adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True)
+######## spatial domains
+deepen.plot_domains(adata)
+######## UMAP
+deepen.plot_umap(adata)
 ...
 ```
 ## Compared tools
