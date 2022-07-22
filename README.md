@@ -102,7 +102,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 data_path = "/home/xuchang/Project/Datasets/DLPFC" #### to your path
-data_name = '151673'
+data_name = '151673' #### project name
 save_path = "/home/xuchang/Project/DeepST/Results" #### save path
 deepen = run(save_path = save_path, 
 	platform = "Visium",
@@ -121,7 +121,7 @@ plt.savefig(os.path.join(save_path_figure,f'{data_name}_domain.pdf'), bbox_inche
 ...
 ```
 ![Results](./Figure/Results.png)
-+ DeepST on ST data from other platforms.
++ #### DeepST on ST data from other platforms.
 ```python
 from DeepST import run
 data_path = './data/'
