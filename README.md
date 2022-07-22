@@ -29,11 +29,11 @@ pip install -r requiements.txt
 <details>
   <summary> 1. Install PyTorch package </summary>
   
-  + Installation via [Anaconda](https://anaconda.org/pyg/pyg).
+  + #### Installation via [Anaconda](https://anaconda.org/pyg/pyg).
 ```bash
 conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch
 ```
-  + Installation via [Pip Wheels](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#installation-via-pip-wheels)
+  + #### Installation via [Pip Wheels](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#installation-via-pip-wheels)
 ```bash
 pip3 install torch torchvision torchaudio
 ```
@@ -92,11 +92,19 @@ pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}
 DeepST is used on spatial transcriptomics (ST) datasets. In essence, you can refer to the following examples:
 + #### DeepST on DLPFC from 10x Visium.
 ```python
-import os
+import os 
+import sys
+import scanpy as sc
+import numpy as np 
+import pandas as pd 
 from DeepST import run
-data_path = './data/'
-data_name = '151673' ###### if multiple datasets, just set data_name to list. data_name = ['151507','151672','151673']
-save_path = './Results/'
+import matplotlib.pyplot as plt
+from pathlib import Path
+
+data_path = "/home/xuchang/Project/STMAP/DLPFC" #### to your path
+data_name = '151673'
+save_path = "/home/xuchang/Project/DeepST/Results" #### save path
+
 
 H_mo = run(data_path=data_path, 
            data_name=data_name, 
