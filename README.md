@@ -101,16 +101,17 @@ from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_path = "/home/xuchang/Project/Datasets/DLPFC" #### to your path
+data_path = "./Datasets/DLPFC" #### to your path
 data_name = '151673' #### project name
-save_path = "/home/xuchang/Project/DeepST/Results" #### save path
+save_path = "./Results" #### save path
 deepen = run(save_path = save_path, 
 	platform = "Visium",
 	pca_n_comps = 200,
 	pre_epochs=1000,
+	Conv_type='GCNConv', #### you can choose GNN types. 
 	)
 adata = deepen._get_adata(data_path, data_name)
-adata = deepen._get_augment(adata, adjacent_weight = 0.4, neighbour_k = 4,)
+adata = deepen._get_augment(adata, adjacent_weight = 0.3, neighbour_k = 4,)
 graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
 adata = deepen._fit(adata, graph_dict, pretrain = False)
 adata = deepen._get_cluster_data(adata, n_domains = eval_cluster_n, priori=True)
