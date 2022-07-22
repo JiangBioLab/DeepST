@@ -88,11 +88,9 @@ pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}
 ```
 </details>
 
-
-
 ## Usage
 DeepST is used on spatial transcriptomics (ST) datasets. In essence, you can refer to the following examples:
-+ DeepST on DLPFC from 10x Visium.
++ #### DeepST on DLPFC from 10x Visium.
 ```python
 import os
 from DeepST import run
