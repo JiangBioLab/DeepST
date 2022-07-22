@@ -101,7 +101,7 @@ from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_path = "/home/xuchang/Project/STMAP/DLPFC" #### to your path
+data_path = "/home/xuchang/Project/Datasets/DLPFC" #### to your path
 data_name = '151673'
 save_path = "/home/xuchang/Project/DeepST/Results" #### save path
 deepen = run(save_path = save_path, 
