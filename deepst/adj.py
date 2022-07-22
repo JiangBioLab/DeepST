@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-# Author: *****
+# Author: ChangXu
 # Created Time : Mon 23 Apr
 # File Name: cal_graph.py
 # Description:`
@@ -10,6 +10,7 @@
 test:
     from cal_graph import graph, combine_graph_dict
     import scanpy as sc
+    data_path = "/home/xuchang/Project/STMAP/Human_breast/output/Breast_data/STMAP_Breast_15.h5ad"
     adata = sc.read(data_path)
     graph_cons = graph(adata.obsm['spatial'], distType='euclidean', k=10)
     graph_dict = graph_cons.main()
@@ -33,12 +34,14 @@ import networkx as nx
 class graph():
     def __init__(self, 
                  data, 
+                 rad_cutoff,
                  k,  
                  distType='euclidean',):
         super(graph, self).__init__()
         self.data = data
         self.distType = distType
         self.k = k
+        self.rad_cutoff = rad_cutoff
         self.num_cell = data.shape[0]
 
         
@@ -66,21 +69,6 @@ class graph():
                 for j in np.arange(0, self.k):
                     graphList.append((node_idx, res[j]))
 
-        # elif self.distType == 'KNN':
-        #     from sklearn.linear_model import LinearRegression
-        #     from sklearn.metrics import pairwise_distances
-        #     img_row = self.adata.obs["imagerow"]
-        #     img_col = self.adata.obs["imagecol"]
-        #     array_row = self.adata.obs["array_row"]
-        #     array_col = self.adata.obs["array_col"]
-        #     rate = 3   
-        #     reg_row = LinearRegression().fit(array_row.values.reshape(-1, 1), img_row)
-        #     reg_col = LinearRegression().fit(array_col.values.reshape(-1, 1), img_col) 
-        #     pd = pairwise_distances(self.adata.obs[["imagecol", "imagerow"]], metric="euclidean")    
-        #     unit = math.sqrt(reg_row.coef_ ** 2 + reg_col.coef_ ** 2)
-
-        #     pd_norm = np.where(pd >= rate * unit, 0, 1)
-        
         elif self.distType == "BallTree":
             from sklearn.neighbors import BallTree
             tree = BallTree(self.data)
@@ -111,15 +99,16 @@ class graph():
                 for j in np.arange(0, len(indices)):
                     graphList.append((node_idx, indices[j])) 
 
-        elif self.distType == "NearestNeighbors":
+        elif self.distType == "Radius":
             from sklearn.neighbors import NearestNeighbors
-            nbrs = NearestNeighbors(n_neighbors=self.k+1, algorithm='ball_tree').fit(self.data)
-            _, ind = nbrs.kneighbors(self.data)
-            indices = ind[:, 1:]
+            nbrs = NearestNeighbors(radius = self.rad_cutoff).fit(self.data)
+            distances, indices = nbrs.radius_neighbors(self.data, return_distance=True)
             graphList=[]
-            for node_idx in range(self.data.shape[0]):
-                for j in np.arange(0, indices.shape[1]):
-                    graphList.append((node_idx, indices[node_idx][j]))
+            for node_idx in range(indices.shape[0]):
+                for j in range(indices[node_idx].shape[0]):
+                    if distances[node_idx][j] > 0 :
+                        graphList.append((node_idx, indices[node_idx][j]))
+            print('%.4f neighbors per cell on average.' %(len(graphList)/self.data.shape[0]))
 
         elif self.distType in dist_list:
             graphList = []
