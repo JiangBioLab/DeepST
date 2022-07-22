@@ -155,9 +155,7 @@ deepen = run(save_path = save_path,
 	pca_n_comps = 200,
 	pre_epochs = 800,
 	)
-adata = deepen._get_adata(data_path, data_name)
-adata = deepen._get_augment(adata, adjacent_weight = 0.3, neighbour_k = 4, weights="weights_matrix_nomd")
-graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
+adata, graph_dict, domains = deepen._get_single_adata(data_path, data_name, weights="weights_matrix_nomd")
 adata = deepen._fit(adata, graph_dict, pretrain = False)
 adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True)
 ######## spatial domains
