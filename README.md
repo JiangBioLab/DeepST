@@ -104,15 +104,20 @@ from pathlib import Path
 data_path = "/home/xuchang/Project/STMAP/DLPFC" #### to your path
 data_name = '151673'
 save_path = "/home/xuchang/Project/DeepST/Results" #### save path
-
-
-H_mo = run(data_path=data_path, 
-           data_name=data_name, 
-           save_path=save_path, 
-           platform='Visium',
-           Conv_type='GCNConv',)
-adata, stmap_feat = H_mo.fit()
-H_mo.plot_clustering(adata, color='DeepST',img_key=None)
+deepen = run(save_path = save_path, 
+				      platform = "Visium",
+				      pca_n_comps = 200,
+				      pre_epochs=1000,
+				     )
+adata = deepen._get_adata(data_path, data_name)
+adata = deepen._get_augment(adata, adjacent_weight = 0.4, neighbour_k = 4,)
+graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
+adata = deepen._fit(adata, graph_dict, pretrain = False)
+adata = deepen._get_cluster_data(adata, n_domains = eval_cluster_n, priori=True)
+sc.pl.spatial(adata, img_key=None, color="DeepST_refine_domain", size=1.6)
+save_path_figure = Path(os.path.join(save_path, "Figure", data_name))
+save_path_figure.mkdir(parents=True, exist_ok=True)
+plt.savefig(os.path.join(save_path_figure,f'{data_name}_domain.pdf'), bbox_inches='tight', dpi=300)
 ...
 ```
 ![Results](./Figure/Results.png)
