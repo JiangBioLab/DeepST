@@ -122,24 +122,32 @@ deepen.plot_domains(adata)
 deepen.plot_umap(adata)
 ...
 ```
-![Results](./Figure/151673.png)
 + #### DeepST integrates data from mutil-batches or different technologies.
 ```python
+import os 
+import sys
+import scanpy as sc
+import numpy as np 
+import pandas as pd 
 from DeepST import run
-data_path = './data/'
-data_name = 'MouseOlfactoryBulb' 
-save_path = './Results/'
+import matplotlib.pyplot as plt
+from pathlib import Path
 
-H_mo = run(data_path=data_path, 
-           data_name=data_name, 
-           save_path=save_path, 
-           platform='Steroseq',  ####### eg: "MERFISH","SlideSeq" and "SeqFish"
-           Conv_type='GCNConv',)
-adata, stmap_feat = H_mo.fit()
-H_mo.plot_clustering(adata, color='DeepST',img_key=None)
+data_path = "./Datasets/DLPFC" 
+data_name_list = ['151673', '151674', '151675', '151676']
+save_path = "./Results" 
+n_domains = 7 
+deepen = run(save_path = save_path, 
+	platform = "Visium",
+	)
+adata, graph_dict, domains = deepen._get_multiple_adata(data_path, data_name)
+adata = deepen._fit(adata, graph_dict, domains, pretrain = True)
+adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True)
+######## UMAP
+deepen.plot_umap(adata, color=["DeepST_domain", "batch_name"])
 ...
 ```
-+ DeepST use different graph neural network (GNN) layer.
++ #### DeepST use different graph neural network (GNN) layer.
 ```python
 from DeepST import run
 data_path = './data/'
