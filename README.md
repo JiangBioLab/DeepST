@@ -122,7 +122,7 @@ deepen.plot_domains(adata)
 deepen.plot_umap(adata)
 ...
 ```
-![Results](./Figure/151673.png)
+![Results](./Figure/1515673.png)
 + #### DeepST on ST data from other platforms.
 ```python
 from DeepST import run
