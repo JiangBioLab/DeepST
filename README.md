@@ -161,3 +161,6 @@ Tools that are compared include:
 | [MERFISH](https://www.pnas.org/content/116/39/19490) |  Mouse brain slice| [Hypothalamic preoptic region](https://www.spatialomics.org/SpatialDB/download/merfish_30385464.tar.gz) |
 
 Spatial transcriptomics data of other platforms can be downloaded https://www.spatialomics.org/SpatialDB/
+
+### Contact
+Feel free to submit an issue or contact us at xuchang0214@163.com for problems about the packages.
