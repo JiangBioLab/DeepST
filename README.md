@@ -105,10 +105,10 @@ data_path = "/home/xuchang/Project/STMAP/DLPFC" #### to your path
 data_name = '151673'
 save_path = "/home/xuchang/Project/DeepST/Results" #### save path
 deepen = run(save_path = save_path, 
-				      platform = "Visium",
-				      pca_n_comps = 200,
-				      pre_epochs=1000,
-				     )
+	platform = "Visium",
+	pca_n_comps = 200,
+	pre_epochs=1000,
+	)
 adata = deepen._get_adata(data_path, data_name)
 adata = deepen._get_augment(adata, adjacent_weight = 0.4, neighbour_k = 4,)
 graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
