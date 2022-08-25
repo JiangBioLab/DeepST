@@ -5,7 +5,9 @@ data_path <- "/home/xuchang/Project/DeepST/code_20220617/All_methods/data"
 save_path <- "/home/xuchang/Project/DeepST/code_20220617/All_methods/Results"
 
 
-sample <- c('Section1_Posterior', 'Section1_Anterior', 'Section_Coronal', "Human_breast_FFPE")
+# sample <- c('Section1_Posterior', 'Section1_Anterior', 'Section_Coronal', "Human_breast_FFPE")
+
+# sample <- c('151507', '151508','151509','151510', '151669', '151670', '151671', '151672', '151673','151674','151675','151676')
 
 for (sample.name in sample ){
 dir.input <- file.path(data_path, sample.name)
@@ -15,10 +17,10 @@ if(!dir.exists(file.path(dir.output))){
   dir.create(file.path(dir.output), recursive = TRUE)
 }
 
-# if(sample.name %in% c('151669', '151670', '151671', '151672')) {
-# 	n_clusters <- 5} else {
-# 		n_clusters <- 7}
-n_clusters <- 15
+if(sample.name %in% c('151669', '151670', '151671', '151672')) {
+  n_clusters <- 5} else {
+  n_clusters <- 7}
+
 ### load data
 dlpfc <- readVisium(dir.input) 
 dlpfc <- logNormCounts(dlpfc)
