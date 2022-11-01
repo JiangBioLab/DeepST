@@ -133,6 +133,8 @@ deepen = run(save_path = save_path,
 adata, graph_dict, domains = deepen._get_multiple_adata(data_path, data_name)
 adata = deepen._fit(adata, graph_dict, domains, pretrain = True)
 adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True)
+########
+
 ######## UMAP
 deepen.plot_umap(adata, color=["DeepST_domain", "batch_name"])
 ...
