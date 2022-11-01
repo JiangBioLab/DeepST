@@ -379,7 +379,7 @@ class run():
     					 legend_loc=legend_loc, legend_fontsize=legend_fontsize, size=size)
 			save_path_figure = Path(os.path.join(self.save_path, "Figure", self.data_name))
 			save_path_figure.mkdir(parents=True, exist_ok=True)
-			plt.savefig(os.path.join(save_path_figure,f'{self.data_name}_{self.Conv_type}_umap.pdf'), bbox_inches='tight', dpi=dpi)
+			plt.savefig(os.path.join(save_path_figure,f'{self.data_name}_domains.pdf'), bbox_inches='tight', dpi=dpi)
 		else:
 			pass
 
