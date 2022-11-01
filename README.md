@@ -112,8 +112,6 @@ adata = deepen._get_augment(adata, adjacent_weight = 0.3, neighbour_k = 4,)
 graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
 adata = deepen._fit(adata, graph_dict, pretrain = False)
 adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True) ###### without using prior knowledge, setting priori = False.
-######## spatial domains
-deepen.plot_domains(adata)
 ######## UMAP
 deepen.plot_umap(adata)
 ...
