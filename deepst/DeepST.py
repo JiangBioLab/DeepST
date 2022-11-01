@@ -217,6 +217,7 @@ class run():
 								neighbour_k=neighbour_k, weights=weights, spatial_k=spatial_k)
 		graph_dict = self._get_graph(adata.obsm[character], distType=distType, k=k,
 									 rad_cutoff=rad_cutoff)
+		self.data_name = data_name
 		if self.verbose:
 			print("Step 1: Augment gene representation is Done!")
 			print("Step 2: Graph computing is Done!")
@@ -257,6 +258,7 @@ class run():
                 	categories=np.unique(adata.obs['batch_name']),).codes,
             		dtype=np.int64,
         		)
+		self.data_name = data_name
 		return adata, graph_dict, domains
 
 	def _fit(
@@ -372,7 +374,7 @@ class run():
 					legend_fontsize='x-large',
 					size=1.6,
 					dpi=300):
-		if isinstance(self.data_name, str):
+		if isinstance(data_name, str):
 			sc.pl.spatial(adata, img_key=img_key, color=color, show=show, 
     					 legend_loc=legend_loc, legend_fontsize=legend_fontsize, size=size)
 			save_path_figure = Path(os.path.join(self.save_path, "Figure", self.data_name))
