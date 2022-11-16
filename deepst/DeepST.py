@@ -374,7 +374,7 @@ class run():
 					legend_fontsize='x-large',
 					size=1.6,
 					dpi=300):
-		if isinstance(data_name, str):
+		if isinstance(self.data_name, str):
 			sc.pl.spatial(adata, img_key=img_key, color=color, show=show, 
     					 legend_loc=legend_loc, legend_fontsize=legend_fontsize, size=size)
 			save_path_figure = Path(os.path.join(self.save_path, "Figure", self.data_name))
