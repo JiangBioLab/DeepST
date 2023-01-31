@@ -26,6 +26,9 @@ cd /home/.../DeepST-main  ### your own path
 conda create -n deepst_env python=3.8
 conda activate deepst_env
 pip install -r requirements.txt
+####### The following two packages need to be installed separately
+pip install torch_sparse==0.6.12
+pip install torch_scatter==2.0.9
 ```
 ### Installing additional packages
 
