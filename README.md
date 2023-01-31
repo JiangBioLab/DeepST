@@ -99,12 +99,13 @@ from pathlib import Path
 
 data_path = "../data/" #### to your path
 data_name = '151673' #### project name
-save_path = "./Results" #### save path
+save_path = "../Results" #### save path
 n_domains = 7 ###### the number of spatial domains.
 deepen = run(save_path = save_path, 
 	platform = "Visium",
 	pca_n_comps = 200,
-	pre_epochs = 800,
+	pre_epochs = 800, #### According to your own hardware, choose the number of training
+	epochs = 1000, #### According to your own hardware, choose the number of training
 	Conv_type="GCNConv", #### you can choose GNN types. 
 	)
 adata = deepen._get_adata(data_path, data_name)
@@ -113,9 +114,9 @@ graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
 adata = deepen._fit(adata, graph_dict, pretrain = False)
 adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True) ###### without using prior knowledge, setting priori = False.
 ######## spatial domains
-deepen.plot_domains(adata)
+deepen.plot_domains(adata, data_name)
 ######## UMAP
-deepen.plot_umap(adata)
+deepen.plot_umap(adata, data_name)
 ...
 ```
 + #### DeepST integrates data from mutil-batches or different technologies.
