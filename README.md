@@ -142,7 +142,7 @@ adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True)
 ########
 
 ######## UMAP
-deepen.plot_umap(adata, color=["DeepST_domain", "batch_name"])
+deepen.plot_umap(adata, color=["DeepST_domain", "batch_name"], data_name_list)
 ...
 ```
 + #### DeepST works on other spatial omics data.
@@ -152,22 +152,23 @@ from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_path = "./Datasets" 
+data_path = "../Datasets" 
 data_name = 'Stereoseq' 
-save_path = "./Results"
+save_path = "../Results"
 n_domains = 8 
 deepen = run(save_path = save_path, 
 	platform = "stereoseq", ##### varous platforms
 	pca_n_comps = 200,
 	pre_epochs = 800,
+	pre_epochs = 1000,
 	)
-adata, graph_dict, domains = deepen._get_single_adata(data_path, data_name, weights="weights_matrix_nomd")
+adata, graph_dict, domains = deepen._get_single_adata(data_path, data_name, weights="weights_matrix_nomd") #### Augmentation without using morphological information
 adata = deepen._fit(adata, graph_dict, pretrain = False)
 adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True)
 ######## spatial domains
-deepen.plot_domains(adata)
+deepen.plot_domains(adata, data_name)
 ######## UMAP
-deepen.plot_umap(adata)
+deepen.plot_umap(adata, data_name)
 ...
 ```
 ## Compared tools
