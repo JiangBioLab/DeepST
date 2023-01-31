@@ -20,6 +20,9 @@ cd DeepST
 #### (Recommended) Using python virtual environment with [`conda`](https://anaconda.org/)
 
 ```bash
+wget https://github.com/JiangBioLab/DeepST/archive/refs/heads/main.zip
+unzip main.zip
+cd /home/.../DeepST-main
 conda create -n deepst_env python=3.8
 conda activate deepst_env
 pip install -r requirements.txt
@@ -91,6 +94,7 @@ pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}
 ## Usage
 DeepST is used on spatial transcriptomics (ST) datasets. In essence, you can refer to the following examples:
 + #### DeepST on DLPFC from 10x Visium.
+First, cd cd /home/.../DeepST-main/deepst
 ```python
 import os 
 from DeepST import run
