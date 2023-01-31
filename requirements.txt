@@ -17,3 +17,5 @@ torch-geometric==1.7.0
 torchvision==0.9.1
 tqdm==4.59.0
 umap-learn==0.5.1 
+psutil==5.9.1
+torch_sparse==0.6.12
