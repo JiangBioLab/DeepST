@@ -126,11 +126,14 @@ from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_path = "./Datasets/DLPFC" 
+data_path = "../data/" 
 data_name_list = ['151673', '151674', '151675', '151676']
-save_path = "./Results" 
+save_path = "../Results" 
 n_domains = 7 
 deepen = run(save_path = save_path, 
+	pca_n_comps = 200,
+	pre_epochs = 800, #### According to your own hardware, choose the number of training
+	epochs = 1000, #### According to your own hardware, choose the number of training
 	platform = "Visium",
 	)
 adata, graph_dict, domains = deepen._get_multiple_adata(data_path, data_name)
