@@ -22,7 +22,7 @@ cd DeepST
 ```bash
 conda create -n deepst_env python=3.8
 conda activate deepst_env
-pip install -r requiements.txt
+pip install -r requirements.txt
 ```
 ### Installing additional packages
 
