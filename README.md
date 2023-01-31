@@ -97,7 +97,7 @@ from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_path = "./Datasets/DLPFC" #### to your path
+data_path = "../data/" #### to your path
 data_name = '151673' #### project name
 save_path = "./Results" #### save path
 n_domains = 7 ###### the number of spatial domains.
