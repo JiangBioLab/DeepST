@@ -108,7 +108,7 @@ from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_path = "../data/DLPFCs" #### to your path
+data_path = "../data/DLPFC" #### to your path
 data_name = '151673' #### project name
 save_path = "../Results" #### save path
 n_domains = 7 ###### the number of spatial domains.
@@ -137,7 +137,7 @@ from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_path = "../data/DLPFCs" 
+data_path = "../data/DLPFC" 
 data_name_list = ['151673', '151674', '151675', '151676']
 save_path = "../Results" 
 n_domains = 7 
