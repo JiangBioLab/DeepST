@@ -34,7 +34,7 @@ pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv t
 ## step3 Download other dependencies
 pip install -r requirements.txt
 ```
-### Installing additional packages
+### Installing additional packages(optional)
 
 <details>
   <summary> 1. Install PyTorch package </summary>
