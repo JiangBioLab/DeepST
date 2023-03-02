@@ -23,13 +23,17 @@ cd DeepST
 wget https://github.com/JiangBioLab/DeepST/archive/refs/heads/main.zip
 unzip main.zip
 cd /home/.../DeepST-main  ### your own path
-conda create -n deepst_env python=3.8
+conda create -n deepst_env python=3.9
 conda activate deepst_env
+## step1 Installing PyTorch’s CUDA support or CPU support on Linux
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116  #### GPU
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu  #### CPU
+## step2 Installing PyG package. If unsuccessful, refer to the "Install PyG package".
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cu116.html #### GPU
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cpu.html  ### CPU
+## step3 Download other dependencies
 pip install -r requirements.txt
-####### The following two packages need to be installed separately. If unsuccessful, refer to the "Install PyG package".
-pip install torch_sparse==0.6.12
-pip install torch_scatter==2.0.9
-```
+
 ### Installing additional packages
 
 <details>
@@ -58,7 +62,7 @@ conda install pyg -c pyg -c conda-forge
 
 We have outsourced a lot of functionality of PyG to other packages, which needs to be installed in advance. These packages come with their own CPU and GPU kernel implementations based on the PyTorch C++/CUDA extension interface. We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinations:
 ```bash
-conda install pyg -c pyg -c conda-forge
+pip install pyg -c pyg -c conda-forge
 ```
 1). Ensure that at least PyTorch 1.4.0 is installed:
 ```bash
@@ -104,7 +108,7 @@ from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_path = "../data/" #### to your path
+data_path = "../data/DLPFCs" #### to your path
 data_name = '151673' #### project name
 save_path = "../Results" #### save path
 n_domains = 7 ###### the number of spatial domains.
@@ -118,7 +122,7 @@ deepen = run(save_path = save_path,
 adata = deepen._get_adata(data_path, data_name)
 adata = deepen._get_augment(adata, adjacent_weight = 0.3, neighbour_k = 4,)
 graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
-adata = deepen._fit(adata, graph_dict, pretrain = False)
+adata = deepen._fit(adata, graph_dict, pretrain = True)
 adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True) ###### without using prior knowledge, setting priori = False.
 ######## spatial domains
 deepen.plot_domains(adata, data_name)
