@@ -137,7 +137,7 @@ from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_path = "../data/" 
+data_path = "../data/DLPFCs" 
 data_name_list = ['151673', '151674', '151675', '151676']
 save_path = "../Results" 
 n_domains = 7 
