@@ -286,6 +286,7 @@ class run():
 				sc.pp.highly_variable_genes(adata, flavor="seurat_v3", n_top_genes=3000)
 				sc.pp.normalize_total(adata, exclude_highly_expressed=True, inplace=False)
 				sc.pp.log1p(adata)
+				sc.pp.scale(adata)
 				concat_X = adata[:, adata.var['highly_variable']].X
 		else:
 			concat_X = adata.obsm["augment_gene_data"]
