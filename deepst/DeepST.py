@@ -160,12 +160,12 @@ class run():
 		spatial_k = 30,
 		):
 		adata_augment = augment_adata(adata, 
-								adjacent_weight = adjacent_weight,
-								neighbour_k = neighbour_k,
-								platform = self.platform,
-								weights = weights,
-								spatial_k = spatial_k,
-								)
+					adjacent_weight = adjacent_weight,
+					neighbour_k = neighbour_k,
+					platform = self.platform,
+					weights = weights,
+					spatial_k = spatial_k,
+					)
 		print("Step 1: Augment gene representation is Done!")
 		return adata_augment
 
@@ -284,44 +284,43 @@ class run():
 			else:
 				sc.pp.filter_genes(adata, min_cells = self.min_cells)
 				sc.pp.highly_variable_genes(adata, flavor="seurat_v3", n_top_genes=3000)
-				sc.pp.normalize_total(adata, target_sum=1, 
-											exclude_highly_expressed=True, inplace=False)
+				sc.pp.normalize_total(adata, exclude_highly_expressed=True, inplace=False)
 				sc.pp.log1p(adata)
 				concat_X = adata[:, adata.var['highly_variable']].X
 		else:
 			concat_X = adata.obsm["augment_gene_data"]
 		#################### load model
 		deepst_model = DeepST_model(
-							input_dim = concat_X.shape[1], 
+				input_dim = concat_X.shape[1], 
                         	Conv_type = self.Conv_type,
                         	linear_encoder_hidden= self.linear_encoder_hidden,
-							linear_decoder_hidden= self.linear_decoder_hidden,
-							conv_hidden= self.conv_hidden,
-							p_drop=self.p_drop,
-							dec_cluster_n=self.dec_cluster_n,
-							)
+				linear_decoder_hidden= self.linear_decoder_hidden,
+				conv_hidden= self.conv_hidden,
+				p_drop=self.p_drop,
+				dec_cluster_n=self.dec_cluster_n,
+				)
 		if domains is None:	
 			deepst_training = train(concat_X, graph_dict, deepst_model, 
-								pre_epochs=self.pre_epochs, 
-								epochs=self.epochs,
-								kl_weight = self.kl_weight,
-                				mse_weight = self.mse_weight, 
-                				bce_kld_weight = self.bce_kld_weight,
-                				domain_weight = self.domain_weight,
-                				use_gpu = self.use_gpu,
-                				)
+					pre_epochs=self.pre_epochs, 
+					epochs=self.epochs,
+					kl_weight = self.kl_weight,
+                			mse_weight = self.mse_weight, 
+                			bce_kld_weight = self.bce_kld_weight,
+                			domain_weight = self.domain_weight,
+                			use_gpu = self.use_gpu,
+                			)
 		else:
 			deepst_adversial_model = AdversarialNetwork(model = deepst_model, n_domains = int(len(self.data_name)))
 			deepst_training = train(concat_X, graph_dict, deepst_adversial_model, 
-								pre_epochs=self.pre_epochs, 
-								epochs=self.epochs, 
-								kl_weight = self.kl_weight,
-                				mse_weight = self.mse_weight, 
-                				bce_kld_weight = self.bce_kld_weight,
-                				domain_weight = self.domain_weight,
-								domains = domains,
-								use_gpu = self.use_gpu,
-								)
+					pre_epochs=self.pre_epochs, 
+					epochs=self.epochs, 
+					kl_weight = self.kl_weight,
+                			mse_weight = self.mse_weight, 
+                			bce_kld_weight = self.bce_kld_weight,
+                			domain_weight = self.domain_weight,
+					domains = domains,
+					use_gpu = self.use_gpu,
+					)
 		if pretrain:
 			deepst_training.fit()
 		else:
@@ -363,15 +362,15 @@ class run():
 		return adata
 
 	def plot_domains(self, 
-					adata, 
-					data_name,
-					img_key=None, 
-					color='DeepST_refine_domain',
-					show=False,
-					legend_loc='right margin',
-					legend_fontsize='x-large',
-					size=1.6,
-					dpi=300):
+			adata, 
+			data_name,
+			img_key=None, 
+			color='DeepST_refine_domain',
+			show=False,
+			legend_loc='right margin',
+			legend_fontsize='x-large',
+			size=1.6,
+			dpi=300):
 		if isinstance(data_name, str):
 			sc.pl.spatial(adata, img_key=img_key, color=color, show=show, 
     					 legend_loc=legend_loc, legend_fontsize=legend_fontsize, size=size)
@@ -382,16 +381,16 @@ class run():
 			pass
 
 	def plot_umap(self, 
-				 adata,
-				 data_name,
-				 color='DeepST_refine_domain', 
-				 legend_loc=None,
-				 legend_fontsize=12,
-				 legend_fontoutline=2,
-				 frameon=False,
-				 add_outline=True,
-				 dpi=300,
-				  ):
+			adata,
+			data_name,
+			color='DeepST_refine_domain', 
+			legend_loc=None,
+			legend_fontsize=12,
+			legend_fontoutline=2,
+			frameon=False,
+			add_outline=True,
+			dpi=300,
+			):
 		umap_adata = anndata.AnnData(adata.obsm["DeepST_embed"])
 		umap_adata.obs_names = adata.obs_names
 		umap_adata.obs = adata.obs
