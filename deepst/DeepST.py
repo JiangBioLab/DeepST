@@ -374,7 +374,7 @@ class run():
 			dpi=300):
 		if isinstance(data_name, str):
 			sc.pl.spatial(adata, img_key=img_key, color=color, show=show, 
-    					 legend_loc=legend_loc, legend_fontsize=legend_fontsize, size=size)
+    					 legend_loc=legend_loc, legend_fontsize=legend_fontsize, spot_size=size)
 			save_path_figure = Path(os.path.join(self.save_path, "Figure", data_name))
 			save_path_figure.mkdir(parents=True, exist_ok=True)
 			plt.savefig(os.path.join(save_path_figure,f'{data_name}_domains.pdf'), bbox_inches='tight', dpi=dpi)
