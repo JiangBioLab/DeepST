@@ -27,7 +27,7 @@ conda create -n deepst_env python=3.9
 conda activate deepst_env
 ## step1 Installing PyTorch’s CUDA support or CPU support on Linux
 pip3 install torch==1.13.0+cu116 torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116  #### GPU
-pip3 install torch==1.13.0 torchvision==0.13.0 torchaudio --extra-index-url https://download.pytorch.org/whl/cpu  #### CPU
+pip3 install torch==1.13.0 torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu  #### CPU
 ## step2 Installing PyG package. If unsuccessful, refer to the "Install PyG package".
 pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cu116.html #### GPU
 pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cpu.html  ### CPU
