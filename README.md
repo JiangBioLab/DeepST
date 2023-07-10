@@ -127,7 +127,6 @@ data = deepen._data_process(adata, pca_n_comps = 200)
 deepst_embed = deepen._fit(
 		data = data,
 		graph_dict = graph_dict,)
-
 adata.obsm["DeepST_embed"] = deepst_embed
 adata = deepen._get_cluster_data(adata, n_domains=n_domains, priori = True)
 sc.pl.spatial(adata, color='DeepST_refine_domain', frameon = False, spot_size=150)
