@@ -340,7 +340,7 @@ def buildNetwork(
     ):
     net = []
     net.append(nn.Linear(in_features, out_features))
-    net.append(nn.BatchNorm1d(out_features, momentum=0.01, eps=0.001))
+    net.append(BatchNorm(out_features, momentum=0.01, eps=0.001))
     if activate=="relu":
         net.append(nn.ReLU())
     elif activate=="sigmoid":
