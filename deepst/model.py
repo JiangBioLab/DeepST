@@ -25,7 +25,7 @@ class DeepST_model(nn.Module):
                 conv_hidden = [32,8],
                 p_drop = 0.01,
                 dec_cluster_n = 15,
-                alpha = 0.8,
+                alpha = 0.9,
                 activate="relu",
                 ):
         super(DeepST_model, self).__init__()
