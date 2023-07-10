@@ -164,6 +164,7 @@ import os
 from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
+import scanpy as sc
 
 data_path = "../data/DLPFC" 
 data_name_list = ['151673', '151674', '151675', '151676']
