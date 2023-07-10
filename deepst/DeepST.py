@@ -198,6 +198,7 @@ class run():
 		adata,
 		pca_n_comps = 200,
 		):
+		adata.raw = adata
 		adata.X = adata.obsm["augment_gene_data"].astype(np.float64)
 		data = sc.pp.normalize_total(adata, target_sum=1, inplace=False)['X']
 		data = sc.pp.log1p(data)
