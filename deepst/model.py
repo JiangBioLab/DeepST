@@ -64,22 +64,22 @@ class DeepST_model(nn.Module):
             '''https://arxiv.org/abs/1609.02907'''
             from torch_geometric.nn import GCNConv
             self.conv = Sequential('x, edge_index', [
-                        (GCNConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        (GCNConv(linear_encoder_hidden[-1], conv_hidden[0]), 'x, edge_index -> x1'),
+                        BatchNorm(conv_hidden[0]),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
-                        (GCNConv(conv_hidden[0]* 2, conv_hidden[-1]), 'x, edge_index -> x1'),
+                        (GCNConv(conv_hidden[0], conv_hidden[-1]), 'x, edge_index -> x1'),
                         ])
             self.conv_logvar = Sequential('x, edge_index', [
-                        (GCNConv(conv_hidden[0]* 2, conv_hidden[-1]), 'x, edge_index -> x1'),
+                        (GCNConv(conv_hidden[0], conv_hidden[-1]), 'x, edge_index -> x1'),
                         ])
 
         elif self.Conv_type == "SAGEConv":
             from torch_geometric.nn import SAGEConv
             self.conv = Sequential('x, edge_index', [
                         (SAGEConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -93,7 +93,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import GraphConv
             self.conv = Sequential('x, edge_index', [
                         (GraphConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -107,7 +107,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import GatedGraphConv
             self.conv = Sequential('x, edge_index', [
                         (GatedGraphConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -121,7 +121,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import ResGatedGraphConv
             self.conv = Sequential('x, edge_index', [
                         (ResGatedGraphConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -135,7 +135,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import TransformerConv
             self.conv = Sequential('x, edge_index', [
                         (TransformerConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -149,7 +149,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import TAGConv
             self.conv = Sequential('x, edge_index', [
                         (TAGConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -163,7 +163,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import ARMAConv
             self.conv = Sequential('x, edge_index', [
                         (ARMAConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -176,7 +176,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import SGConv
             self.conv = Sequential('x, edge_index', [
                         (SGConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -189,7 +189,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import MFConv
             self.conv = Sequential('x, edge_index', [
                         (MFConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -202,7 +202,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import RGCNConv
             self.conv = Sequential('x, edge_index', [
                         (RGCNConv(linear_encoder_hidden[-1], conv_hidden[0]* 2, num_relations=3), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -215,7 +215,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import FeaStConv
             self.conv = Sequential('x, edge_index', [
                         (FeaStConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -228,7 +228,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import LEConv
             self.conv = Sequential('x, edge_index', [
                         (LEConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
@@ -241,7 +241,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import ClusterGCNConv
             self.conv = Sequential('x, edge_index', [
                         (ClusterGCNConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        InstanceNorm(conv_hidden[0]* 2),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
