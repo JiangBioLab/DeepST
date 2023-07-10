@@ -182,7 +182,7 @@ class run():
 				var_names = multiple_adata.var_names.intersection(current_adata.var_names)
 				multiple_adata = multiple_adata[:, var_names]
 				current_adata = current_adata[:, var_names]
-				multiple_adata = multiple_adata.concatenate(current_adata, dtype=np.float64)
+				multiple_adata = multiple_adata.concatenate(current_adata)
 				multiple_graph = combine_graph_dict(multiple_graph, current_graph)
 
 		multiple_adata.obs["batch"] = np.array(
