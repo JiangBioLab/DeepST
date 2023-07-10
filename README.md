@@ -107,28 +107,31 @@ import os
 from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
+import scanpy as sc
 
 data_path = "../data/DLPFC" #### to your path
 data_name = '151673' #### project name
 save_path = "../Results" #### save path
 n_domains = 7 ###### the number of spatial domains.
-deepen = run(save_path = save_path, 
-	platform = "Visium",
-	pca_n_comps = 200,
+
+deepen = run(save_path = save_path,
+	task = "Identify_Domain",
 	pre_epochs = 800, #### According to your own hardware, choose the number of training
 	epochs = 1000, #### According to your own hardware, choose the number of training
-	Conv_type="GCNConv", #### you can choose GNN types. 
-	)
-adata = deepen._get_adata(data_path, data_name)
-adata = deepen._get_augment(adata, adjacent_weight = 0.3, neighbour_k = 4,)
-graph_dict = deepen._get_graph(adata.obsm["spatial"], distType="BallTree", k=12)
-adata = deepen._fit(adata, graph_dict, pretrain = True)
-adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True) ###### without using prior knowledge, setting priori = False.
-######## spatial domains
-deepen.plot_domains(adata, data_name)
-######## UMAP
-deepen.plot_umap(adata, data_name)
-...
+	use_gpu = True)
+adata = deepen._get_adata(platform="Visium", data_path=data_path, data_name=data_name)
+adata = deepen._get_image_crop(adata, data_name=data_name)
+adata = deepen._get_augment(adata, spatial_type="LinearRegress", use_morphological=True)
+graph_dict = deepen._get_graph(adata.obsm["spatial"], distType = "BallTree")
+data = deepen._data_process(adata, pca_n_comps = 200)
+deepst_embed = deepen._fit(
+		data = data,
+		graph_dict = graph_dict,)
+
+adata.obsm["DeepST_embed"] = deepst_embed
+adata = deepen._get_cluster_data(adata, n_domains=n_domains, priori = True)
+sc.pl.spatial(adata, color='DeepST_refine_domain', frameon = False, spot_size=150)
+plt.savefig(os.path.join(save_path, f'{data_name}_domains.pdf'), bbox_inches='tight', dpi=300)
 ```
 + #### DeepST integrates data from mutil-batches or different technologies.
 ```python
