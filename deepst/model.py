@@ -64,15 +64,15 @@ class DeepST_model(nn.Module):
             '''https://arxiv.org/abs/1609.02907'''
             from torch_geometric.nn import GCNConv
             self.conv = Sequential('x, edge_index', [
-                        (GCNConv(linear_encoder_hidden[-1], conv_hidden[0]), 'x, edge_index -> x1'),
-                        BatchNorm(conv_hidden[0]),
+                        (GCNConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
+                        BatchNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
-                        (GCNConv(conv_hidden[0], conv_hidden[-1]), 'x, edge_index -> x1'),
+                        (GCNConv(conv_hidden[0]* 2, conv_hidden[-1]), 'x, edge_index -> x1'),
                         ])
             self.conv_logvar = Sequential('x, edge_index', [
-                        (GCNConv(conv_hidden[0], conv_hidden[-1]), 'x, edge_index -> x1'),
+                        (GCNConv(conv_hidden[0]* 2, conv_hidden[-1]), 'x, edge_index -> x1'),
                         ])
 
         elif self.Conv_type == "SAGEConv":
