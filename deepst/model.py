@@ -65,7 +65,7 @@ class DeepST_model(nn.Module):
             from torch_geometric.nn import GCNConv
             self.conv = Sequential('x, edge_index', [
                         (GCNConv(linear_encoder_hidden[-1], conv_hidden[0]* 2), 'x, edge_index -> x1'),
-                        BatchNorm(conv_hidden[0]* 2),
+                        InstanceNorm(conv_hidden[0]* 2),
                         nn.ReLU(inplace=True), 
                         ])
             self.conv_mean = Sequential('x, edge_index', [
