@@ -168,13 +168,16 @@ from pathlib import Path
 data_path = "../data/DLPFC" 
 data_name_list = ['151673', '151674', '151675', '151676']
 save_path = "../Results" 
-n_domains = 7 
+n_domains = 7
+
 deepen = run(save_path = save_path, 
 	task = "Integration",
-	pre_epochs = 800, #### According to your own hardware, choose the number of training
-	epochs = 1000, #### According to your own hardware, choose the number of training
+	pre_epochs = 800, 
+	epochs = 1000, 
 	use_gpu = True,
 	)
+
+###### Generate an augmented list of multiple datasets
 augement_data_list = []
 graph_list = []
 for i in range(len(data_name_list)):
@@ -184,19 +187,18 @@ for i in range(len(data_name_list)):
 	graph_dict = deepen._get_graph(adata.obsm["spatial"], distType = "KDTree")
 	augement_data_list.append(adata)
 	graph_list.append(graph_dict)
-########
 
+######## Synthetic Datasets and Graphs
 multiple_adata, multiple_graph = deepen._get_multiple_adata(adata_list = augement_data_list, data_name_list = data_name_list, graph_list = graph_list)
 
+###### Enhanced data preprocessing
 data = deepen._data_process(multiple_adata, pca_n_comps = 200)
 
 deepst_embed = deepen._fit(
 		data = data,
 		graph_dict = multiple_graph,
-		domains = multiple_adata.obs["batch"].values,
-		n_domains = len(data_name_list)
-	)
-
+		domains = multiple_adata.obs["batch"].values,  ##### Input to Domain Adversarial Model
+		n_domains = len(data_name_list))
 multiple_adata.obsm["DeepST_embed"] = deepst_embed
 multiple_adata = deepen._get_cluster_data(multiple_adata, n_domains=n_domains, priori = True)
 
@@ -216,25 +218,46 @@ import os
 from DeepST import run
 import matplotlib.pyplot as plt
 from pathlib import Path
+import scanpy as sc
 
-data_path = "../Datasets" 
+data_path = "../data" 
 data_name = 'Stereoseq' 
-save_path = "../Results"
-n_domains = 8 
-deepen = run(save_path = save_path, 
-	platform = "stereoseq", ##### varous platforms
-	pca_n_comps = 200,
-	pre_epochs = 800,
-	pre_epochs = 1000,
-	)
-adata, graph_dict, domains = deepen._get_single_adata(data_path, data_name, weights="weights_matrix_nomd") #### Augmentation without using morphological information
-adata = deepen._fit(adata, graph_dict, pretrain = False)
-adata = deepen._get_cluster_data(adata, n_domains = n_domains, priori=True)
-######## spatial domains
-deepen.plot_domains(adata, data_name)
-######## UMAP
-deepen.plot_umap(adata, data_name)
-...
+save_path = "../Results" 
+n_domains = 15 
+
+deepen = run(save_path = save_path,
+	task = "Identify_Domain", 
+	pre_epochs = 800, 
+	epochs = 1000, 
+	use_gpu = True)
+###### Read in other spatial data, or user can read in themselves. Including original expression
+###### information and spatial location information, where the location information is saved in .obsm["spatial"]
+adata = deepen._get_adata(platform="Stereoseq", data_path=data_path, data_name=data_name)
+
+###### Data augmentation. spatial_type includes three kinds of "KDTree", "BallTree" and "LinearRegress", among which "LinearRegress"
+###### is only applicable to 10x visium and the remaining omics selects the other two.
+###### "use_morphological" defines whether to use morphological images.
+adata = deepen._get_augment(adata, spatial_type="BallTree", use_morphological=False)
+
+###### Build graphs. "distType" includes "KDTree", "BallTree", "kneighbors_graph", "Radius", etc., see adj.py
+graph_dict = deepen._get_graph(adata.obsm["spatial"], distType = "BallTree")
+
+###### Enhanced data preprocessing
+data = deepen._data_process(adata, pca_n_comps = 200)
+
+###### Training models
+deepst_embed = deepen._fit(
+		data = data,
+		graph_dict = graph_dict,)
+###### DeepST outputs
+adata.obsm["DeepST_embed"] = deepst_embed
+
+###### Define the number of space domains, and the model can also be customized. If it is a model custom priori = False.
+adata = deepen._get_cluster_data(adata, n_domains=n_domains, priori = True)
+
+###### Spatial localization map of the spatial domain
+sc.pl.spatial(adata, color='DeepST_refine_domain', frameon = False, spot_size=150)
+plt.savefig(os.path.join(save_path, f'{data_name}_domains.pdf'), bbox_inches='tight', dpi=300)
 ```
 ## Compared tools
 Tools that are compared include: 
