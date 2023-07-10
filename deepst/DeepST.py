@@ -111,16 +111,16 @@ class run():
 		spatial_type = "KDTree"
 		):
 		adata = augment_adata(adata, 
-							md_dist_type = md_dist_type,
-							gb_dist_type = gb_dist_type,
-							n_components = n_components,
-							use_morphological = use_morphological,
-							use_data = use_data,
-							neighbour_k = neighbour_k,
-							adjacent_weight = adjacent_weight,
-							spatial_k = spatial_k,
-							spatial_type = spatial_type
-							)
+				md_dist_type = md_dist_type,
+				gb_dist_type = gb_dist_type,
+				n_components = n_components,
+				use_morphological = use_morphological,
+				use_data = use_data,
+				neighbour_k = neighbour_k,
+				adjacent_weight = adjacent_weight,
+				spatial_k = spatial_k,
+				spatial_type = spatial_type
+				)
 		print("Step 1: Augment molecule expression is Done!")
 		return adata
 
@@ -235,12 +235,12 @@ class run():
 				)
 		if self.task == "Identify_Domain":
 			deepst_training = train(
-							data, 
-							graph_dict, 
-							deepst_model, 
-							pre_epochs = self.pre_epochs, 
-							epochs = self.epochs,
-							kl_weight = kl_weight,
+					data, 
+					graph_dict, 
+					deepst_model, 
+					pre_epochs = self.pre_epochs, 
+					epochs = self.epochs,
+					kl_weight = kl_weight,
                 			mse_weight = mse_weight, 
                 			bce_kld_weight = bce_kld_weight,
                 			domain_weight = domain_weight,
@@ -249,13 +249,13 @@ class run():
 		elif self.task == "Integration":
 			deepst_adversial_model = AdversarialNetwork(model = deepst_model, n_domains = n_domains)
 			deepst_training = train(
-							data, 
-							graph_dict, 
-							deepst_adversial_model,
-							domains = domains,
-							pre_epochs = self.pre_epochs, 
-							epochs = self.epochs,
-							kl_weight = kl_weight,
+					data, 
+					graph_dict, 
+					deepst_adversial_model,
+					domains = domains,
+					pre_epochs = self.pre_epochs, 
+					epochs = self.epochs,
+					kl_weight = kl_weight,
                 			mse_weight = mse_weight, 
                 			bce_kld_weight = bce_kld_weight,
                 			domain_weight = domain_weight,
@@ -296,52 +296,3 @@ class run():
 		# save_data_path.mkdir(parents=True, exist_ok=True)
 		# adata.write(os.path.join(save_data_path, 'DeepST_processed.h5ad'), compression="gzip")
 		return adata
-
-	# def plot_domains(self, 
-	# 		adata, 
-	# 		data_name,
-	# 		img_key=None, 
-	# 		color='DeepST_refine_domain',
-	# 		show=False,
-	# 		legend_loc='right margin',
-	# 		legend_fontsize='x-large',
-	# 		size=1.6,
-	# 		dpi=300):
-	# 	if isinstance(data_name, str):
-	# 		sc.pl.spatial(adata, img_key=img_key, color=color, show=show, 
-    # 					 legend_loc=legend_loc, legend_fontsize=legend_fontsize, size=size)
-	# 		save_path_figure = Path(os.path.join(self.save_path, "Figure", data_name))
-	# 		save_path_figure.mkdir(parents=True, exist_ok=True)
-	# 		plt.savefig(os.path.join(save_path_figure,f'{data_name}_domains.pdf'), bbox_inches='tight', dpi=dpi)
-	# 	else:
-	# 		pass
-
-	# def plot_umap(self, 
-	# 		adata,
-	# 		data_name,
-	# 		color='DeepST_refine_domain', 
-	# 		legend_loc=None,
-	# 		legend_fontsize=12,
-	# 		legend_fontoutline=2,
-	# 		frameon=False,
-	# 		add_outline=True,
-	# 		dpi=300,
-	# 		):
-	# 	umap_adata = anndata.AnnData(adata.obsm["DeepST_embed"])
-	# 	umap_adata.obs_names = adata.obs_names
-	# 	umap_adata.obs = adata.obs
-	# 	sc.pp.neighbors(umap_adata, n_neighbors = self.n_neighbors)
-	# 	sc.tl.umap(umap_adata)
-	# 	sc.pl.umap(umap_adata, color=color, add_outline=add_outline, legend_loc=legend_loc,
-    #         		legend_fontsize=legend_fontsize, legend_fontoutline=legend_fontoutline, 
-    #         		frameon=frameon)
-	# 	if isinstance(data_name, list):		
-	# 		save_path_figure = Path(os.path.join(self.save_path, "Figure", '_'.join(data_name)))
-	# 		save_path_figure.mkdir(parents=True, exist_ok=True)
-	# 		plt.savefig(os.path.join(save_path_figure, f"{'_'.join(data_name)}_umap.pdf"), bbox_inches='tight', dpi=dpi)
-	# 	else:
-	# 		save_path_figure = Path(os.path.join(self.save_path, "Figure", data_name))
-	# 		save_path_figure.mkdir(parents=True, exist_ok=True)
-	# 		plt.savefig(os.path.join(save_path_figure, f"{data_name}_umap.pdf"), bbox_inches='tight', dpi=dpi)
-			
-
