@@ -89,7 +89,7 @@ class run():
 		adata,
 		data_name,
 		cnnType = 'ResNet50',
-		pca_n_comps = 100, 
+		pca_n_comps = 50, 
 		):
 		save_path_image_crop = Path(os.path.join(self.save_path, 'Image_crop', data_name))
 		save_path_image_crop.mkdir(parents=True, exist_ok=True)
@@ -103,7 +103,7 @@ class run():
 		adjacent_weight = 0.3,
 		neighbour_k = 4,
 		spatial_k = 30,
-		n_components = 200,
+		n_components = 100,
 		md_dist_type="cosine",
 		gb_dist_type="correlation",
 		use_morphological = True,
