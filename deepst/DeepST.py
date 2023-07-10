@@ -39,13 +39,13 @@ from augment import augment_adata
 
 class run():
 	def __init__(
-			self,
-			save_path="./",
-			task = "Identify_Domain",
-			pre_epochs=1000, 
-			epochs=500,
-			use_gpu = True,
-			):
+		self,
+		save_path="./",
+		task = "Identify_Domain",
+		pre_epochs=1000, 
+		epochs=500,
+		use_gpu = True,
+		):
 		self.save_path = save_path
 		self.pre_epochs = pre_epochs
 		self.epochs = epochs
