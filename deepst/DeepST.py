@@ -89,7 +89,7 @@ class run():
 		adata,
 		data_name,
 		cnnType = 'ResNet50',
-		pca_n_comps = 200, 
+		pca_n_comps = 50, 
 		):
 		save_path_image_crop = Path(os.path.join(self.save_path, 'Image_crop', data_name))
 		save_path_image_crop.mkdir(parents=True, exist_ok=True)
@@ -213,9 +213,9 @@ class run():
 		domains = None,
 		n_domains = None,
 		Conv_type = "GCNConv", 
-		linear_encoder_hidden = [64, 32],
-		linear_decoder_hidden = [32, 64],
-		conv_hidden = [32, 16], 
+		linear_encoder_hidden = [32, 20],
+		linear_decoder_hidden = [32],
+		conv_hidden = [32, 8], 
 		p_drop = 0.01, 
 		dec_cluster_n = 20, 
 		kl_weight = 1,
