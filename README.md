@@ -1,265 +1,291 @@
-# DeepST: Identification of spatial domains in spatial transcriptomics by deep learning
+# Identification of spatial domains in spatial transcriptomics by deep learning
+
+## Update
+<img src="https://raw.githubusercontent.com/EsdenRun/DeepST/main/Fig/Update.jpg" alt="Image Description" width="20%" height="20%" />
+May 28, 2025
+
+<font color="red">(1) Updated the installation method for DeepST.</font>  
+<font color="red">(2) Fixed some bugs.</font>
 
 ## Overview
 DeepST first uses H&E staining to extract tissue morphology information through a pre-trained deep learning model, and normalizes each spot’s gene expression according to the similarity of adjacent spots. DeepST further learns a spatial adjacency matrix on spatial location for the construction of graph convolutional network. DeepST uses a graph neural network autoencoder and a denoising autoencoder to jointly generate a latent representation of augmented ST data, while domain adversarial neural networks (DAN) are used to integrate ST data from multi-batches or different technologies. The output of DeepST can be applied to identify spatial domains, batch effect correction and downstream analysis.
 
-![Workflow](./Figure/Workflow.png)
+![Workflow](https://raw.githubusercontent.com/EsdenRun/DeepST/main/Fig/Workflow.png)
 
-## Package: `DeepST`
+## How to install DeepST
 
-We created the python package called `DeepST` that uses [`scanpy`](https://scanpy.readthedocs.io/en/stable/) to streamline the integration of spatial transcriptomics datasets and
-evaluate the results. DeepST is implemented in the open-source python using [`PyTorch`](https://pytorch.org/) and [`PyG`](https://github.com/pyg-team/pytorch_geometric) libraries.
+To install DeepST, make sure you have [PyTorch](https://pytorch.org/) and [PyG](https://pyg.org/) installed. For more details on dependencies, refer to the `environment.yml` file.
 
-### Installation
-#### Start by grabbing this source codes:
-```bash
-git clone https://github.com/spatial-Transcriptomics/DeepST.git
-cd DeepST
+### Step 1: Set Up Conda Environment
+```
+conda create -n deepst-env python=3.9 
 ```
 
-#### (Recommended) Using python virtual environment with [`conda`](https://anaconda.org/)
+### Step 2: Install PyTorch and PyG
 
-```bash
-wget https://github.com/JiangBioLab/DeepST/archive/refs/heads/main.zip
-unzip main.zip
-cd /home/.../DeepST-main  ### your own path
-conda create -n deepst_env python=3.9
-conda activate deepst_env
-## step1 Installing PyTorch’s CUDA support or CPU support on Linux
-pip3 install torch==1.13.0+cu116 torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116  #### GPU
-pip3 install torch==1.13.0 torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu  #### CPU
-## step2 Installing PyG package. If unsuccessful, refer to the "Install PyG package".
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cu116.html #### GPU
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cpu.html  ### CPU
-## step3 Download other dependencies
-pip install -r requirements.txt
+Activate the environment and install PyTorch and PyG. Adjust the installation commands based on your CUDA version or choose the CPU version if necessary.
+
+* General Installation Command
 ```
-### Installing additional packages(optional)
-
-<details>
-  <summary> 1. Install PyTorch package </summary>
-  
-  + #### Installation via [Anaconda](https://anaconda.org/pyg/pyg).
-```bash
-conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch
+conda activate deepst-env
+pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118
+pip install pyg_lib==0.3.1+pt21cu118 torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cu118.html
+pip install torch_geometric==2.3.1
 ```
-  + #### Installation via [Pip Wheels](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#installation-via-pip-wheels)
-```bash
-pip3 install torch torchvision torchaudio
+* Tips for selecting the correct CUDA version
+  - Run the following command to verify CUDA version:
+  ```
+  nvcc --version
+  ```
+  - Alternatively, use:
+  ```
+  nvidia-smi
+  ```
+* Modify installation commands based on CUDA
+  - For CUDA 12.1
+    ```
+    pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu121
+    pip install pyg_lib==0.3.1+pt21cu121 torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cu121.html
+    pip install torch_geometric==2.3.1
+    ```
+  - For CPU-only
+    ```
+    pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cpu
+    pip install pyg_lib==0.3.1+pt21cpu torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cpu.html
+    pip install torch_geometric==2.3.1
+    ```
+
+### Step 3: Install dirac from shell
 ```
-</details>
-
-<details>
-  <summary> 2. Install PyG package </summary>
-           
-  + Installation via [Anaconda](https://anaconda.org/pyg/pyg).
-
-You can now install PyG via Anaconda for all major OS/PyTorch/CUDA combinations 🤗 Given that you have [PyTorch >= 1.8.0](https://pytorch.org/get-started/locally/) installed, simply run:
-```bash
-conda install pyg -c pyg -c conda-forge
+    pip install deepstkit
 ```
-  + Installation via [Pip Wheels](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#installation-via-pip-wheels)
 
-We have outsourced a lot of functionality of PyG to other packages, which needs to be installed in advance. These packages come with their own CPU and GPU kernel implementations based on the PyTorch C++/CUDA extension interface. We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinations:
-```bash
-pip install pyg -c pyg -c conda-forge
+### Step 4: Import DIRAC in your jupyter notebooks or/and scripts 
 ```
-1). Ensure that at least PyTorch 1.4.0 is installed:
-```bash
-python -c "import torch; print(torch.__version__)"
->>> 1.9.0
+    import deepstkit as dt
 ```
-2). Find the CUDA version PyTorch was installed with:
-```bash
-python -c "import torch; print(torch.version.cuda)"
->>> 11.1
-```
-3). Install the relevant packages:
-```bash
-pip install torch-scatter -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
-pip install torch-sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
-pip install torch-geometric
 
-#### where ${CUDA} and ${TORCH} should be replaced by the specific CUDA version (cpu, cu92, cu101, cu102, cu110, cu111) and PyTorch version (1.4.0, 1.5.0, 1.6.0, 1.7.0, 1.7.1,  1.8.0, 1.8.1, 1.9.0, 1.9.1), respectively. For example, for PyTorch 1.9.0/1.9.1 and CUDA 11.1, type:
-pip install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cu111.html
-pip install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cu111.html
-pip install torch-geometric
-
-#### For PyTorch 1.8.0/1.8.1 and CUDA 10.2, type:
-pip install torch-scatter -f https://data.pyg.org/whl/torch-1.8.0+cu102.html
-pip install torch-sparse -f https://data.pyg.org/whl/torch-1.8.0+cu102.html
-pip install torch-geometric
-```
-4). Install additional packages (optional):
-To add additional functionality to PyG, such as k-NN and radius graph generation or SplineConv support, run
-```bash
-pip install torch-cluster -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
-pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
-```
-</details>
-
-## Usage
-<img src="./Figure/Update.jpg" alt="Image Description" width="20%" height="20%" />
-July 10, 2023
-
-(1) Due to the protocol issues of various space technology platforms, the data format is very different, and various platforms do not provide morphological images. For the convenience of users, we have changed the way of reading data to make it easier to use.
-
-(2) Fixed bugs that appeared in the integration task.
-
-(3) Expand the applicability of the model.
-
-DeepST is used on spatial transcriptomics (ST) datasets. In essence, you can refer to the following examples:
+## Quick Start
 + #### DeepST on DLPFC from 10x Visium.
-First, ``` cd /home/.../DeepST-main/deepst ```
 ```python
-import os 
-from DeepST import run
+import os
 import matplotlib.pyplot as plt
-from pathlib import Path
 import scanpy as sc
+import deepstkit as dt
 
-data_path = "../data/DLPFC" #### to your path
-data_name = '151673' #### project name
-save_path = "../Results" #### save path
-n_domains = 7 ###### the number of spatial domains.
+# ========== Configuration ==========
+SEED = 0                     # Random seed for reproducibility
+DATA_DIR = "../data/DLPFC"   # Directory containing spatial data
+SAMPLE_ID = "151673"         # Sample identifier to analyze
+RESULTS_DIR = "../Results"   # Directory to save outputs
+N_DOMAINS = 7                # Expected number of spatial domains
 
-deepen = run(save_path = save_path,
-	task = "Identify_Domain", #### DeepST includes two tasks, one is "Identify_Domain" and the other is "Integration"
-	pre_epochs = 800, ####  choose the number of training
-	epochs = 1000, #### choose the number of training
-	use_gpu = True)
-###### Read in 10x Visium data, or user can read in themselves.
-adata = deepen._get_adata(platform="Visium", data_path=data_path, data_name=data_name)
-###### Segment the Morphological Image
-adata = deepen._get_image_crop(adata, data_name=data_name) 
+# ========== Initialize Analysis ==========
+# Set random seed and initialize DeepST
+dt.utils_func.seed_torch(seed=SEED)
 
-###### Data augmentation. spatial_type includes three kinds of "KDTree", "BallTree" and "LinearRegress", among which "LinearRegress"
-###### is only applicable to 10x visium and the remaining omics selects the other two.
-###### "use_morphological" defines whether to use morphological images.
-adata = deepen._get_augment(adata, spatial_type="LinearRegress", use_morphological=True)
+# Create DeepST instance with analysis parameters
+deepst = dt.main.run(
+    save_path=RESULTS_DIR,
+    task="Identify_Domain",  # Spatial domain identification
+    pre_epochs=500,          # Pretraining iterations
+    epochs=500,              # Main training iterations
+    use_gpu=True             # Accelerate with GPU if available
+)
 
-###### Build graphs. "distType" includes "KDTree", "BallTree", "kneighbors_graph", "Radius", etc., see adj.py
-graph_dict = deepen._get_graph(adata.obsm["spatial"], distType = "BallTree")
+# ========== Data Loading & Preprocessing ==========
+# (Optional) Load spatial transcriptomics data (Visium platform)
+# e.g. adata = anndata.read_h5ad("*.h5ad"), this data including .obsm['spatial']
+adata = deepst._get_adata(
+    platform="Visium",
+    data_path=DATA_DIR,
+    data_name=SAMPLE_ID
+)
 
-###### Enhanced data preprocessing
-data = deepen._data_process(adata, pca_n_comps = 200)
+# Optional: Incorporate H&E image features (skip if not available)
+# adata = deepst._get_image_crop(adata, data_name=SAMPLE_ID)
 
-###### Training models
-deepst_embed = deepen._fit(
-		data = data,
-		graph_dict = graph_dict,)
-###### DeepST outputs
+# ========== Feature Engineering ==========
+# Data augmentation (skip morphological if no H&E)
+adata = deepst._get_augment(
+    adata,
+    spatial_type="BallTree",
+    use_morphological = False  # Set True if using H&E features
+)
+
+# Construct spatial neighborhood graph
+graph_dict = deepst._get_graph(
+    adata.obsm["spatial"],
+    distType="KDTree"        # Spatial relationship modeling
+)
+
+# Dimensionality reduction
+data = deepst._data_process(
+    adata,
+    pca_n_comps=200          # Reduce to 200 principal components
+)
+
+# ========== Model Training ==========
+# Train DeepST model and obtain embeddings
+deepst_embed = deepst._fit(
+    data=data,
+    graph_dict=graph_dict
+)
 adata.obsm["DeepST_embed"] = deepst_embed
 
-###### Define the number of space domains, and the model can also be customized. If it is a model custom priori = False.
-adata = deepen._get_cluster_data(adata, n_domains=n_domains, priori = True)
+# ========== Spatial Domain Detection ==========
+# Cluster spots into spatial domains
+adata = deepst._get_cluster_data(
+    adata,
+    n_domains=N_DOMAINS,     # Expected number of domains
+    priori=True              # Use prior knowledge if available
+)
 
-###### Spatial localization map of the spatial domain
-sc.pl.spatial(adata, color='DeepST_refine_domain', frameon = False, spot_size=150)
-plt.savefig(os.path.join(save_path, f'{data_name}_domains.pdf'), bbox_inches='tight', dpi=300)
+# ========== Visualization & Output ==========
+# Plot spatial domains
+sc.pl.spatial(
+    adata,
+    color=["DeepST_refine_domain"],  # Color by domain
+    frameon=False,
+    spot_size=150,
+    title=f"Spatial Domains - {SAMPLE_ID}"
+)
+
+# Save results
+output_file = os.path.join(RESULTS_DIR, f"{SAMPLE_ID}_domains.pdf")
+plt.savefig(output_file, bbox_inches="tight", dpi=300)
+print(f"Analysis complete! Results saved to {output_file}")
 ```
 + #### DeepST integrates data from mutil-batches or different technologies.
 ```python
-import os 
-from DeepST import run
+import os
 import matplotlib.pyplot as plt
-from pathlib import Path
 import scanpy as sc
+import deepstkit as dt
 
-data_path = "../data/DLPFC" 
-data_name_list = ['151673', '151674', '151675', '151676']
-save_path = "../Results" 
-n_domains = 7
+# ========== Configuration ==========
+SEED = 0  
+DATA_DIR = "../data/DLPFC"        
+SAMPLE_IDS = ['151673', '151674','151675', '151676']
+RESULTS_DIR = "../Results"        
+N_DOMAINS = 7                             
+INTEGRATION_NAME = "_".join(SAMPLE_IDS)
 
-deepen = run(save_path = save_path, 
-	task = "Integration",
-	pre_epochs = 800, 
-	epochs = 1000, 
-	use_gpu = True,
-	)
+# ========== Initialize Analysis ==========
+# Set random seed and initialize DeepST
+dt.utils_func.seed_torch(seed=SEED)
 
-###### Generate an augmented list of multiple datasets
-augement_data_list = []
-graph_list = []
-for i in range(len(data_name_list)):
-	adata = deepen._get_adata(platform="Visium", data_path=data_path, data_name=data_name_list[i])
-	adata = deepen._get_image_crop(adata, data_name=data_name_list[i])
-	adata = deepen._get_augment(adata, spatial_type="LinearRegress")
-	graph_dict = deepen._get_graph(adata.obsm["spatial"], distType = "KDTree")
-	augement_data_list.append(adata)
-	graph_list.append(graph_dict)
+# ========== Initialize DeepST Integration ==========
+integration_model = dt.main.run(
+    save_path=RESULTS_DIR,
+    task="Integration",       # Multi-sample integration task
+    pre_epochs=500,           
+    epochs=500,              
+    use_gpu=True              
+)
 
-######## Synthetic Datasets and Graphs
-multiple_adata, multiple_graph = deepen._get_multiple_adata(adata_list = augement_data_list, data_name_list = data_name_list, graph_list = graph_list)
+# ========== Multi-Sample Processing ==========
+processed_data = []
+spatial_graphs = []
 
-###### Enhanced data preprocessing
-data = deepen._data_process(multiple_adata, pca_n_comps = 200)
+for sample_id in SAMPLE_IDS:
+    # Load and preprocess each sample
+    adata = integration_model._get_adata(
+        platform="Visium",
+        data_path=DATA_DIR,
+        data_name=sample_id
+    )
+    
+    # Incorporate H&E image features (Optional)
+    # adata = integration_model._get_image_crop(adata, data_name=sample_id)
+    
+    # Feature augmentation
+    adata = integration_model._get_augment(
+        adata,
+        spatial_type="BallTree",
+        use_morphological=False, # Use prior knowledge if available
+    )
+    
+    # Construct spatial neighborhood graph
+    graph = integration_model._get_graph(
+        adata.obsm["spatial"],
+        distType="KDTree"
+    )
+    
+    processed_data.append(adata)
+    spatial_graphs.append(graph)
 
-deepst_embed = deepen._fit(
-		data = data,
-		graph_dict = multiple_graph,
-		domains = multiple_adata.obs["batch"].values,  ##### Input to Domain Adversarial Model
-		n_domains = len(data_name_list))
-multiple_adata.obsm["DeepST_embed"] = deepst_embed
-multiple_adata = deepen._get_cluster_data(multiple_adata, n_domains=n_domains, priori = True)
+# ========== Dataset Integration ==========
+# Combine multiple samples into integrated dataset
+combined_adata, combined_graph = integration_model._get_multiple_adata(
+    adata_list=processed_data,
+    data_name_list=SAMPLE_IDS,
+    graph_list=spatial_graphs
+)
 
-sc.pp.neighbors(multiple_adata, use_rep='DeepST_embed')
-sc.tl.umap(multiple_adata)
-sc.pl.umap(multiple_adata, color=["DeepST_refine_domain","batch_name"])
-plt.savefig(os.path.join(save_path, f'{"_".join(data_name_list)}_umap.pdf'), bbox_inches='tight', dpi=300)
+# Dimensionality reduction
+integrated_data = integration_model._data_process(
+    combined_adata,
+    pca_n_comps=200
+)
 
-for data_name in data_name_list:
-	adata = multiple_adata[multiple_adata.obs["batch_name"]==data_name]
-	sc.pl.spatial(adata, color='DeepST_refine_domain', frameon = False, spot_size=150)
-	plt.savefig(os.path.join(save_path, f'{data_name}_domains.pdf'), bbox_inches='tight', dpi=300)
+# ========== Integrated Model Training ==========
+# Train with domain adversarial learning
+embeddings = integration_model._fit(
+    data=integrated_data,
+    graph_dict=combined_graph,
+    domains=combined_adata.obs["batch"].values,  # For batch correction
+    n_domains=len(SAMPLE_IDS) )                 # Number of batches
+
+combined_adata.obsm["DeepST_embed"] = embeddings
+
+# ========== Spatial Domain Detection ==========
+combined_adata = integration_model._get_cluster_data(
+    combined_adata,
+    n_domains=N_DOMAINS,
+    priori=True,             # Use biological priors if available
+    batch_key="batch_name",
+)
+
+# ========== Visualization ==========
+# UMAP of integrated data
+sc.pp.neighbors(combined_adata, use_rep='DeepST_embed')
+sc.tl.umap(combined_adata)
+
+# Save combined UMAP plot
+umap_plot = sc.pl.umap(
+    combined_adata,
+    color=["DeepST_refine_domain", "batch_name"],
+    title=f"Integrated UMAP - Samples {INTEGRATION_NAME}",
+    return_fig=True
+)
+umap_plot.savefig(
+    os.path.join(RESULTS_DIR, f"{INTEGRATION_NAME}_integrated_umap.pdf"),
+    bbox_inches='tight',
+    dpi=300
+)
+
+# Save individual spatial domain plots
+for sample_id in SAMPLE_IDS:
+    sample_data = combined_adata[combined_adata.obs["batch_name"]==sample_id]
+    
+    spatial_plot = sc.pl.spatial(
+        sample_data,
+        color='DeepST_refine_domain',
+        title=f"Spatial Domains - {sample_id}",
+        frameon=False,
+        spot_size=150,
+        return_fig=True
+    )
+    spatial_plot.savefig(
+        os.path.join(RESULTS_DIR, f"{sample_id}_domains.pdf"),
+        bbox_inches='tight',
+        dpi=300
+    )
+
+print(f"Integration complete! Results saved to {RESULTS_DIR}")
 ```
-+ #### DeepST works on other spatial omics data.
-```python
-import os 
-from DeepST import run
-import matplotlib.pyplot as plt
-from pathlib import Path
-import scanpy as sc
 
-data_path = "../data" 
-data_name = 'Stereoseq' 
-save_path = "../Results" 
-n_domains = 15 
-
-deepen = run(save_path = save_path,
-	task = "Identify_Domain", 
-	pre_epochs = 800, 
-	epochs = 1000, 
-	use_gpu = True)
-###### Read in other spatial data, or user can read in themselves. Including original expression
-###### information and spatial location information, where the location information is saved in .obsm["spatial"]
-adata = deepen._get_adata(platform="Stereoseq", data_path=data_path, data_name=data_name)
-
-###### Data augmentation. spatial_type includes three kinds of "KDTree", "BallTree" and "LinearRegress", among which "LinearRegress"
-###### is only applicable to 10x visium and the remaining omics selects the other two.
-###### "use_morphological" defines whether to use morphological images.
-adata = deepen._get_augment(adata, spatial_type="BallTree", use_morphological=False)
-
-###### Build graphs. "distType" includes "KDTree", "BallTree", "kneighbors_graph", "Radius", etc., see adj.py
-graph_dict = deepen._get_graph(adata.obsm["spatial"], distType = "BallTree")
-
-###### Enhanced data preprocessing
-data = deepen._data_process(adata, pca_n_comps = 200)
-
-###### Training models
-deepst_embed = deepen._fit(
-		data = data,
-		graph_dict = graph_dict,)
-###### DeepST outputs
-adata.obsm["DeepST_embed"] = deepst_embed
-
-###### Define the number of space domains, and the model can also be customized. If it is a model custom priori = False.
-adata = deepen._get_cluster_data(adata, n_domains=n_domains, priori = True)
-
-###### Spatial localization map of the spatial domain
-sc.pl.spatial(adata, color='DeepST_refine_domain', frameon = False, spot_size=150)
-plt.savefig(os.path.join(save_path, f'{data_name}_domains.pdf'), bbox_inches='tight', dpi=300)
-```
 ## Compared tools
 Tools that are compared include: 
 * [BayesSpace](https://github.com/edward130603/BayesSpace)
